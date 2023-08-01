@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt'
 import {userService} from '../user/user.service.js'
 import {logger} from '../../services/logger.service.js'
 
-const cryptr = new Cryptr(process.env.SECRET || 'Secret-Puk-1234')
+const cryptr = new Cryptr(process.env.SECRET || 'board-land')
 
 export const authService = {
     signup,
@@ -19,8 +19,8 @@ async function login(username, password) {
     const user = await userService.getByUsername(username)
     if (!user) return Promise.reject('Invalid username or password')
     // TODO: un-comment for real login
-    // const match = await bcrypt.compare(password, user.password)
-    // if (!match) return Promise.reject('Invalid username or password')
+    const match = await bcrypt.compare(password, user.password)
+    if (!match) return Promise.reject('Invalid username or password')
 
     delete user.password
     user._id = user._id.toString()
