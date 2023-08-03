@@ -10,7 +10,7 @@ export const userService = {
     update,         // Update (Edit profile)
     remove,         // Delete (remove user)
     query,          // List (of users)
-    getByUsername   // Used for Login
+    getByEmail   // Used for Login
 }
 
 async function query(filterBy = {}) {
@@ -20,7 +20,7 @@ async function query(filterBy = {}) {
         var users = await collection.find(criteria).toArray()
         users = users.map(user => {
             delete user.password
-            user.createdAt = ObjectId(user._id).getTimestamp()
+            user.createdAt = new ObjectId(user._id).getTimestamp()
             // Returning fake fresh data
             // user.createdAt = Date.now() - (1000 * 60 * 60 * 24 * 3) // 3 days ago
             return user
@@ -51,13 +51,13 @@ async function getById(userId) {
         throw err
     }
 }
-async function getByUsername(username) {
+async function getByEmail(email) {
     try {
         const collection = await dbService.getCollection('user')
-        const user = await collection.findOne({ username })
+        const user = await collection.findOne({ email })
         return user
     } catch (err) {
-        logger.error(`while finding user by username: ${username}`, err)
+        logger.error(`while finding user by email: ${email}`, err)
         throw err
     }
 }
@@ -76,7 +76,7 @@ async function update(user) {
     try {
         // peek only updatable properties
         const userToSave = {
-            _id: ObjectId(user._id), // needed for the returnd obj
+            _id: new ObjectId(user._id), // needed for the returnd obj
             fullname: user.fullname,
 
         }
@@ -93,11 +93,11 @@ async function add(user) {
     try {
 
          // Validate that there are no such user:
-         const existUser = await getByUsername(user.username)
-         if (existUser) throw new Error('Username taken')
+         const existUser = await getByEmail(user.email)
+         if (existUser) throw new Error('Email taken')
         // peek only updatable fields!
         const userToAdd = {
-            username: user.username,
+            email: user.email,
             password: user.password,
             fullname: user.fullname,
             imgUrl: user.imgUrl,
@@ -118,7 +118,7 @@ function _buildCriteria(filterBy) {
         const txtCriteria = { $regex: filterBy.txt, $options: 'i' }
         criteria.$or = [
             {
-                username: txtCriteria
+                email: txtCriteria
             },
             {
                 fullname: txtCriteria
