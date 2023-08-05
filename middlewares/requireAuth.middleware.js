@@ -7,10 +7,10 @@ export function requireAuth(req, res, next) {
     req.loggedinUser = loggedinUser
     console.log('user auth',loggedinUser)
 
-    // if (config.isGuestMode && !loggedinUser) {
-    //     req.loggedinUser = { _id: '', fullname: 'Guest' ,imgUrl:'https://cdn1.monday.com/dapulse_default_photo.png'}
-    //     return next()
-    // }
+    if (config.isGuestMode && !loggedinUser) {
+        req.loggedinUser = { _id: '', fullname: 'Guest' ,imgUrl:'https://cdn1.monday.com/dapulse_default_photo.png'}
+        return next()
+    }
     if (!loggedinUser) return res.status(401).send('Not Authenticated')
     next()
 }
