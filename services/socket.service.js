@@ -21,6 +21,7 @@ export function setupSocketAPI(http) {
                 logger.info(`Socket is leaving topic ${socket.myTopic} [id: ${socket.id}]`)
             }
             socket.join(topic)
+            console.log('topic:', topic)
             socket.myTopic = topic
         })
         socket.on('chat-send-msg', msg => {
@@ -69,7 +70,7 @@ async function emitToUser({ type, data, userId }) {
 // Optionally, broadcast to a room / to all
 async function broadcast({ type, data, room = null, userId }) {
     // userId = userId.toString()
-    
+    console.log('in brooadcast');
     logger.info(`Broadcasting event: ${type}`)
     const excludedSocket = await _getUserSocket(userId)
     if (room && excludedSocket) {

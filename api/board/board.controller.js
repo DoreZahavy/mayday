@@ -1,6 +1,7 @@
 import {boardService} from './board.service.js'
 import {logger} from '../../services/logger.service.js'
 import { socketService } from '../../services/socket.service.js'
+import { asyncLocalStorage } from '../../services/als.service.js'
 
 export async function getBoards(req, res) {
   try {
@@ -44,13 +45,14 @@ export async function addBoard(req, res) {
 
 
 export async function updateBoard(req, res) {
+  const { loggedinUser } = asyncLocalStorage.getStore()
   try {
     const board = req.body
     const updatedBoard = await boardService.update(board)
-    console.log('hiii')
-    // socketService.broadcast({ type:'update-board', data:updatedBoard, room : updatedBoard._id })
-    socketService.emitTo({ type:'update-board', data:updatedBoard })
-
+    // console.log('updatedBoard',updatedBoard)
+    socketService.broadcast({ type:'update-board', data:updatedBoard, room : updatedBoard._id , userId: loggedinUser._id})
+    // socketService.emitTo({ type:'update-board', data:updatedBoard, label:updatedBoard._id})
+console.log('after broadcast');
     res.json(updatedBoard)
   } catch (err) {
     logger.error('Failed to update board', err)
