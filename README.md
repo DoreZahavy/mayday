@@ -25,6 +25,6 @@ mayday is a powerful project management tool built using Vue3, VueX, Node.js, Ex
 * Data is stored and managed in a MongoDB database, ensuring efficient and reliable data storage.
 * Middleware functions, such as logger and authentication, enhance the backend functionality.
 * Enable guest mode to easily open authentication for the sake of demonstrating the app.
-* The backend includes a configuration file `/server/config.js` to store relevant data for production and development modes for easy switching.
+* The backend includes a configuration file to store relevant data for production and development modes for easy switching.
 
 
